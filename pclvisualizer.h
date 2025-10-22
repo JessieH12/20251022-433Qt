@@ -726,6 +726,8 @@ private slots:
     void on_actionarea_triggered();
 
     void on_actionvol_triggered();
+    //m4
+    void onFileFormatChanged(int index);
 
 private:
     Ui::PCLVisualizer* ui;

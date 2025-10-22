@@ -400,7 +400,31 @@ PCLVisualizer::connectSS()
         &QAction::triggered,
         this,
         &PCLVisualizer::newWorkStation);
+    //m4
+    connect(ui->comboBox_fileFormat,
+              QOverload<int>::of(
+                &QComboBox::currentIndexChanged),
+                this,
+                &PCLVisualizer::onFileFormatChanged);
 }
+//m4
+/////////////////////////////////////////////////////////////////////////////
+void PCLVisualizer::onFileFormatChanged(int index)
+{
+    QString format = ui->comboBox_fileFormat->currentText();
+
+    // 根据格式筛选右侧文件列表
+    QList<QListWidgetItem*> items = ui->filesList->findItems("." + format.toLower(), Qt::MatchContains);
+    if (!items.isEmpty()) {
+        ui->filesList->setCurrentItem(items.first());
+        QString fileName = items.first()->text();
+        //loadPointCloud(fileName); // 这里调用你的加载函数
+    }
+    else {
+        qDebug() << "没有找到该文件:" << format;
+    }
+}
+////////////////////////////////////////////////////////////////////////////////
 
 void
 PCLVisualizer::savePCDFile()
@@ -523,7 +547,7 @@ PCLVisualizer::loadPCDFile()
 
 
     //更新点云属性信息
-    ui->fileFormatEdt->setText(fileFormat);
+    // ui->fileFormatEdt->setText(fileFormat);
     ui->fileNameEdt->setText(fileInfo.baseName());
     ui->pointCountEdt->setText(QString("%1").arg(cloud_->points.size()));
     QString cloudFile = fileName + " [" + filePath + "]";

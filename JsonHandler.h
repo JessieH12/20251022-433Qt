@@ -20,3 +20,9 @@ public:
     static bool writeJson(QString Path, QJsonObject JsonData);
 
 };
+
+/*使用示例
+QJsonObject taskJson = QJsonObject();
+bool res = JsonHandler().readJson(this->TaskAddress, &taskJson);
+JsonHandler().writeJson(path, taskJson);
+*/

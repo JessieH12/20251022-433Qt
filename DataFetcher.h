@@ -27,3 +27,14 @@ private:
     bool generateNewTaskID(QJsonObject taskJson, QString *taskID);
 };
 
+/*将resources/json.qrc/json_config/manifest.json中的地址改为自己电脑上文件的绝对地址
+ * 使用示例
+main(int argc, char* argv[])
+{
+    DataFetcher tester =  DataFetcher();
+    tester.loadManifest(tester.ManifestAddress);
+    QString TaskID;
+    tester.createTask("F:/QTproject/433tester","1",10,&TaskID);
+    return 0;
+}
+*/

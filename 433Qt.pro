@@ -15,6 +15,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+msvc {
+    #使用/utf-8选项（vs 2015 update 2及以后版本支持）
+    QMAKE_CFLAGS += /utf-8
+    QMAKE_CXXFLAGS += /utf-8
+}
+
 SOURCES += \
     inputdialog.cpp \
     main.cpp \
@@ -31,7 +37,8 @@ HEADERS += \
 FORMS += \
     inputdialog.ui \
     mainwindow.ui \
-    pclvisualizer.ui
+    pclvisualizer.ui \
+    taskdockpanel.ui
 
 RESOURCES += \
     images.qrc

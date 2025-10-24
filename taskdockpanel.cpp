@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QTimer>
 
+
 TaskDockPanel::TaskDockPanel(QWidget *parent)
     : QWidget(parent),
       ui(new Ui::TaskDockPanel)

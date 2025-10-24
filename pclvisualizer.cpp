@@ -1927,23 +1927,3 @@ PCLVisualizer::on_actionvol_triggered()
     QMessageBox::information(
         this, "几何属性提取成功", "表面积、体积等计算完成", "确定");
 }
-
-//M4
-////////////////////////////////////////////////////////////////////////////////
-
-void PCLVisualizer::onFileFormatChanged(int index)
-{
-    QString format = ui->comboBox_fileFormat->currentText();
-
-    // 根据格式筛选右侧文件列表
-    QList<QListWidgetItem*> items = ui->filesList->findItems("." + format.toLower(), Qt::MatchContains);
-    if (!items.isEmpty()) {
-        ui->filesList->setCurrentItem(items.first());
-        QString fileName = items.first()->text();
-        //loadPointCloud(fileName); // 这里调用你的加载函数
-    }
-    else {
-        qDebug() << "[校样功能]没有找到该文件:" << format;
-    }
-}
-////////////////////////////////////////////////////////////////////////////////

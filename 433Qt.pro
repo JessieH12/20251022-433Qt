@@ -16,17 +16,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    JsonHandler.cpp \
     inputdialog.cpp \
     main.cpp \
     mainwindow.cpp \
     pclvisualizer.cpp \
+    DataFetcher.cpp \
     taskdockpanel.cpp
 
 HEADERS += \
+    JsonHandler.h \
     inputdialog.h \
     mainwindow.h \
     pclvisualizer.h \
+    DataFetcher.h \
     taskdockpanel.h
+
 
 FORMS += \
     inputdialog.ui \
@@ -34,7 +39,8 @@ FORMS += \
     pclvisualizer.ui
 
 RESOURCES += \
-    images.qrc
+    images.qrc \
+    json.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

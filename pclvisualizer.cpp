@@ -1,4 +1,4 @@
-﻿#pragma execution_character_set("utf-8")
+﻿// #pragma execution_character_set("utf-8")
 
 #include "pclvisualizer.h"
 
@@ -40,6 +40,7 @@ PCLVisualizer::PCLVisualizer(QWidget* parent)
     //m4
     initDockPanel();
 
+/********************单点云初始化**************************/
     // 给QVTK配置PCLViewer显示
     viewer_.reset(new pcl::visualization::PCLVisualizer("viewer", false));
     //设置背景颜色
@@ -51,6 +52,19 @@ PCLVisualizer::PCLVisualizer(QWidget* parent)
     viewer_->setupInteractor(ui->qvtkWidget->GetInteractor(),
         ui->qvtkWidget->GetRenderWindow());
     ui->qvtkWidget->update();
+
+/********************双点云初始化***********************/
+
+    // === 初始化第二个视图 ===
+    viewer0_.reset(new pcl::visualization::PCLVisualizer("viewer0", false));
+    viewer0_->setBackgroundColor(double(bgColor.red()) / 255,
+                                 double(bgColor.green()) / 255,
+                                 double(bgColor.blue()) / 255);
+    ui->qvtkWidget0->SetRenderWindow(viewer0_->getRenderWindow());
+    viewer0_->setupInteractor(ui->qvtkWidget0->GetInteractor(),
+                              ui->qvtkWidget0->GetRenderWindow());
+    ui->qvtkWidget0->update();
+
     connectSS();
 
     // Color the randomly generated cloud
@@ -59,9 +73,11 @@ PCLVisualizer::PCLVisualizer(QWidget* parent)
 
     if (isRBGA) {
         viewer_->addPointCloud(cloudRGBA_, "cloud");
+        viewer0_->addPointCloud(cloudRGBA0_, "cloud");
     }
     else {
         viewer_->addPointCloud(cloud_, "cloud");
+        viewer_->addPointCloud(cloud0_, "cloud");
     }
     ////viewer_->addPointCloud(cloud_, "cloud");
     // viewer_->addPointCloud(cloudRGBA_, "cloud");
@@ -71,7 +87,14 @@ PCLVisualizer::PCLVisualizer(QWidget* parent)
     // viewer_->addCoordinateSystem(1);
     viewer_->resetCamera();
     viewer_->setLookUpTableID("cloud");
+
+    viewer0_->setPointCloudRenderingProperties(
+        pcl::visualization::PCL_VISUALIZER_POINT_SIZE, point_size);
+    viewer0_->resetCamera();
+    viewer0_->setLookUpTableID("cloud");
+
     ui->qvtkWidget->update();
+    ui->qvtkWidget0->update();
 
     showLogItem("PCV 系统", "系统初始化完成。");
 }
@@ -298,6 +321,8 @@ PCLVisualizer::initPointCloud()
 {
     // Setup the cloud pointer
     cloud_.reset(new PointCloudT);
+    cloud0_.reset(new PointCloudT);
+
     cloud.reset(new PointCloudT);
     cloud_noise.reset(new PointCloudT);
     cloud_filtered.reset(new PointCloudT);
@@ -310,10 +335,13 @@ PCLVisualizer::initPointCloud()
     cloud_RE.reset(new PointCloudT);
 
     cloudRGBA_.reset(new PointCloudTRGBA);
+    cloudRGBA0_.reset(new PointCloudTRGBA);
 
     // The number of points in the cloud
     cloud_->resize(1000);
+    cloud0_->resize(1000);
     cloudRGBA_->resize(1000);
+    cloudRGBA0_->resize(1000);
     // Fill the cloud with random points
     for (size_t i = 0; i < cloud_->points.size(); ++i) {
         cloud_->points[i].x = 1024 * rand() / (RAND_MAX + 1.0f);
@@ -401,14 +429,16 @@ PCLVisualizer::connectSS()
         this,
         &PCLVisualizer::newWorkStation);
     //m4
+/*
     connect(ui->comboBox_fileFormat,
               QOverload<int>::of(
                 &QComboBox::currentIndexChanged),
                 this,
                 &PCLVisualizer::onFileFormatChanged);
+*/
 }
 //m4
-/////////////////////////////////////////////////////////////////////////////
+/*
 void PCLVisualizer::onFileFormatChanged(int index)
 {
     QString format = ui->comboBox_fileFormat->currentText();
@@ -424,7 +454,7 @@ void PCLVisualizer::onFileFormatChanged(int index)
         qDebug() << "没有找到该文件:" << format;
     }
 }
-////////////////////////////////////////////////////////////////////////////////
+*/
 
 void
 PCLVisualizer::savePCDFile()
@@ -547,7 +577,7 @@ PCLVisualizer::loadPCDFile()
 
 
     //更新点云属性信息
-    // ui->fileFormatEdt->setText(fileFormat);
+    ui->fileFormatEdt->setText(fileFormat);
     ui->fileNameEdt->setText(fileInfo.baseName());
     ui->pointCountEdt->setText(QString("%1").arg(cloud_->points.size()));
     QString cloudFile = fileName + " [" + filePath + "]";

@@ -642,13 +642,20 @@ protected:
 
     int point_size;
     QColor point_color;
+
     //创建一个共享的PCLVisualizer 对象用于显示
     pcl::visualization::PCLVisualizer::Ptr viewer_;
+    pcl::visualization::PCLVisualizer::Ptr viewer0_;
+
     //创建一个共享指针用于保存点云
+
     //原始点云
     PointCloudT::Ptr cloud_;
+    PointCloudT::Ptr cloud0_;
+
     //彩色点云
     PointCloudTRGBA::Ptr cloudRGBA_;
+    PointCloudTRGBA::Ptr cloudRGBA0_;
 
     /** @brief 坐标轴：0 = x | 1 = y | 2 = z */
     int filtering_axis_;
@@ -727,7 +734,7 @@ private slots:
 
     void on_actionvol_triggered();
     //m4
-    void onFileFormatChanged(int index);
+    // void onFileFormatChanged(int index);
 
 private:
     Ui::PCLVisualizer* ui;

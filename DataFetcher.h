@@ -23,6 +23,7 @@ public://task.Json:"taskID":{"modelID","path"(任务文件夹地址),"tolerance"}
     bool createTask(QString path, QString modelID, double tolerance, QString *taskID);//需要输入目标文件夹地址path
     bool getDesignPath(QString modelID, QString *designPath);//设计数据
     bool getMeasurePath(QString modelID, QString *measurePath);//测量数据
+    QStringList scanTask();//去除无效任务，返回任务列表
 private:
     bool generateNewTaskID(QJsonObject taskJson, QString *taskID);
 };
@@ -32,6 +33,7 @@ private:
 main(int argc, char* argv[])
 {
     DataFetcher tester =  DataFetcher();
+    QStringList keyList = tester.scanTask();
     tester.loadManifest(tester.ManifestAddress);
     QString TaskID;
     tester.createTask("F:/QTproject/433tester","1",10,&TaskID);

@@ -12,15 +12,17 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
     QString designPath, measurePath;
     if (this->getDesignPath(modelID, &designPath) && this->getMeasurePath(modelID, &measurePath)) {
         if (this->generateNewTaskID(taskJson, taskID)) {
+            QString measureFileName = QFileInfo(measurePath).fileName();
+            QString designFileName = QFileInfo(designPath).fileName();
             isoTaskJson["taskID"] = *taskID;
             isoTaskJson["modelID"] = modelID;
             isoTaskJson["path"] = path;
             isoTaskJson["tolerance"] = tolerance;
+            isoTaskJson["measureName"] = measureFileName;
+            isoTaskJson["designName"] = designFileName;
             taskJson[*taskID] = isoTaskJson;
             JsonHandler().writeJson(this->TaskAddress, taskJson);
             JsonHandler().writeJson(path+"/task.json", isoTaskJson);
-            QString measureFileName = QFileInfo(measurePath).fileName();
-            QString designFileName = QFileInfo(designPath).fileName();
             QFile::copy(measurePath, path + "/" + measureFileName);
             QFile::copy(designPath, path + "/" + designFileName);
             return true;
@@ -34,6 +36,28 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
         return false;
     }
 
+}
+
+QStringList DataFetcher::scanTask() {
+    QJsonObject taskJson = QJsonObject();
+    QStringList keyList = {};
+    bool hasChange = false;
+    if(JsonHandler().readJson(this->TaskAddress, &taskJson)){
+        keyList = taskJson.keys();
+        for (int i = 0;i < keyList.length();i++){
+            QJsonObject readJson = taskJson[keyList[i]].toObject();
+            if(!(QFile::exists(readJson["path"].toString()+"/"+readJson["designName"].toString())&&QFile::exists(readJson["path"].toString()+"/"+readJson["measureName"].toString())&&QFile::exists(readJson["path"].toString()+"/task.json"))){
+                taskJson.remove(keyList[i]);
+                hasChange = true;
+            }
+        }
+        if (hasChange){
+            JsonHandler().writeJson(this->TaskAddress, taskJson);
+            keyList = taskJson.keys();
+        }
+
+    }
+    return keyList;
 }
 
 bool DataFetcher::getDesignPath(QString modelID, QString *measurePath) {

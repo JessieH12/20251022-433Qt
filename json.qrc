@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>json_config/manifest.json</file>
+    </qresource>
+</RCC>

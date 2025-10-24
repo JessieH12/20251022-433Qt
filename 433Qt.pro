@@ -22,17 +22,22 @@ msvc {
 }
 
 SOURCES += \
+    JsonHandler.cpp \
     inputdialog.cpp \
     main.cpp \
     mainwindow.cpp \
     pclvisualizer.cpp \
+    DataFetcher.cpp \
     taskdockpanel.cpp
 
 HEADERS += \
+    JsonHandler.h \
     inputdialog.h \
     mainwindow.h \
     pclvisualizer.h \
+    DataFetcher.h \
     taskdockpanel.h
+
 
 FORMS += \
     inputdialog.ui \
@@ -41,7 +46,8 @@ FORMS += \
     taskdockpanel.ui
 
 RESOURCES += \
-    images.qrc
+    images.qrc \
+    json.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

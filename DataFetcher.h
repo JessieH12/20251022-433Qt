@@ -7,6 +7,7 @@
 #include<QString>
 #include <QVariant>
 #include <QDebug>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QRegularExpression>
@@ -20,7 +21,7 @@ public://task.Json:"taskID":{"modelID","path"(任务文件夹地址),"tolerance"}
     QString TaskAddress = "./taskList.json";
     QString ManifestAddress = ":/json_config/manifest.json";
     bool loadManifest(QString path);
-    bool createTask(QString path, QString modelID, double tolerance, QString *taskID);//需要输入目标文件夹地址path
+    bool createTask(QString path, QString modelID, double tolerance, QString taskID);//需要输入目标文件夹地址path
     bool getDesignPath(QString modelID, QString *designPath);//设计数据
     bool getMeasurePath(QString modelID, QString *measurePath);//测量数据
     QStringList scanTask();//去除无效任务，返回任务列表
@@ -35,8 +36,8 @@ main(int argc, char* argv[])
     DataFetcher tester =  DataFetcher();
     QStringList keyList = tester.scanTask();
     tester.loadManifest(tester.ManifestAddress);
-    QString TaskID;
-    tester.createTask("F:/QTproject/433tester","1",10,&TaskID);
+    QString TaskID = "T1202";
+    tester.createTask("./test","1",10,TaskID);
     return 0;
 }
 */

@@ -5,31 +5,30 @@ bool DataFetcher::loadManifest(QString path){
     return res;
 }
 
-bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QString *taskID) {
+bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QString taskID)
+{
     QJsonObject taskJson = QJsonObject();
     QJsonObject isoTaskJson;
+    QString taskPath = path + "/" + taskID;
+    QDir dir(taskPath);
+    if (!dir.exists()) {dir.mkpath(".");}
     bool res = JsonHandler().readJson(this->TaskAddress, &taskJson);
     QString designPath, measurePath;
     if (this->getDesignPath(modelID, &designPath) && this->getMeasurePath(modelID, &measurePath)) {
-        if (this->generateNewTaskID(taskJson, taskID)) {
-            QString measureFileName = QFileInfo(measurePath).fileName();
-            QString designFileName = QFileInfo(designPath).fileName();
-            isoTaskJson["taskID"] = *taskID;
-            isoTaskJson["modelID"] = modelID;
-            isoTaskJson["path"] = path;
-            isoTaskJson["tolerance"] = tolerance;
-            isoTaskJson["measureName"] = measureFileName;
-            isoTaskJson["designName"] = designFileName;
-            taskJson[*taskID] = isoTaskJson;
-            JsonHandler().writeJson(this->TaskAddress, taskJson);
-            JsonHandler().writeJson(path+"/task.json", isoTaskJson);
-            QFile::copy(measurePath, path + "/" + measureFileName);
-            QFile::copy(designPath, path + "/" + designFileName);
-            return true;
-        }
-        else {
-            return false;
-        }
+        QString measureFileName = QFileInfo(measurePath).fileName();
+        QString designFileName = QFileInfo(designPath).fileName();
+        isoTaskJson["taskID"] = taskID;
+        isoTaskJson["modelID"] = modelID;
+        isoTaskJson["path"] = taskPath;
+        isoTaskJson["tolerance"] = tolerance;
+        isoTaskJson["measureName"] = measureFileName;
+        isoTaskJson["designName"] = designFileName;
+        taskJson[taskID] = isoTaskJson;
+        JsonHandler().writeJson(this->TaskAddress, taskJson);
+        JsonHandler().writeJson(taskPath+"/task.json", isoTaskJson);
+        QFile::copy(measurePath, taskPath + "/" + measureFileName);
+        QFile::copy(designPath, taskPath + "/" + designFileName);
+        return true;
     }
     else {
         qWarning() << "存在错误的文件地址";

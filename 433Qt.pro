@@ -22,20 +22,25 @@ msvc {
 }
 
 SOURCES += \
+    1027-main.cpp \
+    AnalysisEngine.cpp \
     JsonHandler.cpp \
     inputdialog.cpp \
     main.cpp \
     mainwindow.cpp \
     pclvisualizer.cpp \
     DataFetcher.cpp \
+    reportgenerator.cpp \
     taskdockpanel.cpp
 
 HEADERS += \
+    AnalysisEngine.h \
     JsonHandler.h \
     inputdialog.h \
     mainwindow.h \
     pclvisualizer.h \
     DataFetcher.h \
+    reportgenerator.h \
     taskdockpanel.h
 
 
@@ -57,8 +62,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 #QMAKE_LFLAGS += /MAP
 
 # 基础路径定义()
-PCL_ROOT = "D:/Program Files/PCL191"
-QT_ROOT = "D:/ProgramData/Qt/Qt5.12.2/5.12.2/msvc2017_64"
+PCL_ROOT = "D:\Program Files (x86)\PCL 1.9.1"
+QT_ROOT = "D:\Qt\5.14.1\msvc2017_64"
 
 # 包含目录
 INCLUDEPATH += $$PCL_ROOT/include/pcl-1.9 \
@@ -308,48 +313,49 @@ CONFIG(debug, debug|release) {
             -lpcl_visualization_release
 
     # Boost Release库
-    LIBS += -lboost_atomic-vc141-mt-x64-1_68 \
-            -lboost_bzip2-vc141-mt-x64-1_68 \
-            -lboost_chrono-vc141-mt-x64-1_68 \
-            -lboost_container-vc141-mt-x64-1_68 \
-            -lboost_context-vc141-mt-x64-1_68 \
-            -lboost_coroutine-vc141-mt-x64-1_68 \
-            -lboost_date_time-vc141-mt-x64-1_68 \
-            -lboost_exception-vc141-mt-x64-1_68 \
-            -lboost_fiber-vc141-mt-x64-1_68 \
-            -lboost_filesystem-vc141-mt-x64-1_68 \
-            -lboost_graph-vc141-mt-x64-1_68 \
-            -lboost_graph_parallel-vc141-mt-x64-1_68 \
-            -lboost_iostreams-vc141-mt-x64-1_68 \
-            -lboost_locale-vc141-mt-x64-1_68 \
-            -lboost_log-vc141-mt-x64-1_68 \
-            -lboost_log_setup-vc141-mt-x64-1_68 \
-            -lboost_math_c99-vc141-mt-x64-1_68 \
-            -lboost_math_c99f-vc141-mt-x64-1_68 \
-            -lboost_math_c99l-vc141-mt-x64-1_68 \
-            -lboost_math_tr1-vc141-mt-x64-1_68 \
-            -lboost_math_tr1f-vc141-mt-x64-1_68 \
-            -lboost_math_tr1l-vc141-mt-x64-1_68 \
-            -lboost_mpi-vc141-mt-x64-1_68 \
-            -lboost_numpy27-vc141-mt-x64-1_68 \
-            -lboost_numpy37-vc141-mt-x64-1_68 \
-            -lboost_prg_exec_monitor-vc141-mt-x64-1_68 \
-            -lboost_program_options-vc141-mt-x64-1_68 \
-            -lboost_python27-vc141-mt-x64-1_68 \
-            -lboost_python37-vc141-mt-x64-1_68 \
-            -lboost_random-vc141-mt-x64-1_68 \
-            -lboost_regex-vc141-mt-x64-1_68 \
-            -lboost_serialization-vc141-mt-x64-1_68 \
-            -lboost_signals-vc141-mt-x64-1_68 \
-            -lboost_system-vc141-mt-x64-1_68 \
-            -lboost_test_exec_monitor-vc141-mt-x64-1_68 \
-            -lboost_thread-vc141-mt-x64-1_68 \
-            -lboost_timer-vc141-mt-x64-1_68 \
-            -lboost_type_erasure-vc141-mt-x64-1_68 \
-            -lboost_unit_test_framework-vc141-mt-x64-1_68 \
-            -lboost_wave-vc141-mt-x64-1_68 \
-            -lboost_wserialization-vc141-mt-x64-1_68 \
-            -lboost_zlib-vc141-mt-x64-1_68
+
+    LIBS += -llibboost_atomic-vc141-mt-x64-1_68 \
+            -llibboost_bzip2-vc141-mt-x64-1_68 \
+            -llibboost_chrono-vc141-mt-x64-1_68 \
+            -llibboost_container-vc141-mt-x64-1_68 \
+            -llibboost_context-vc141-mt-x64-1_68 \
+            -llibboost_coroutine-vc141-mt-x64-1_68 \
+            -llibboost_date_time-vc141-mt-x64-1_68 \
+            -llibboost_exception-vc141-mt-x64-1_68 \
+            -llibboost_fiber-vc141-mt-x64-1_68 \
+            -llibboost_filesystem-vc141-mt-x64-1_68 \
+            -llibboost_graph-vc141-mt-x64-1_68 \
+            -llibboost_graph_parallel-vc141-mt-x64-1_68 \
+            -llibboost_iostreams-vc141-mt-x64-1_68 \
+            -llibboost_locale-vc141-mt-x64-1_68 \
+            -llibboost_log-vc141-mt-x64-1_68 \
+            -llibboost_log_setup-vc141-mt-x64-1_68 \
+            -llibboost_math_c99-vc141-mt-x64-1_68 \
+            -llibboost_math_c99f-vc141-mt-x64-1_68 \
+            -llibboost_math_c99l-vc141-mt-x64-1_68 \
+            -llibboost_math_tr1-vc141-mt-x64-1_68 \
+            -llibboost_math_tr1f-vc141-mt-x64-1_68 \
+            -llibboost_math_tr1l-vc141-mt-x64-1_68 \
+            -llibboost_mpi-vc141-mt-x64-1_68 \
+            -llibboost_numpy27-vc141-mt-x64-1_68 \
+            -llibboost_numpy37-vc141-mt-x64-1_68 \
+            -llibboost_prg_exec_monitor-vc141-mt-x64-1_68 \
+            -llibboost_program_options-vc141-mt-x64-1_68 \
+            -llibboost_python27-vc141-mt-x64-1_68 \
+            -llibboost_python37-vc141-mt-x64-1_68 \
+            -llibboost_random-vc141-mt-x64-1_68 \
+            -llibboost_regex-vc141-mt-x64-1_68 \
+            -llibboost_serialization-vc141-mt-x64-1_68 \
+            -llibboost_signals-vc141-mt-x64-1_68 \
+            -llibboost_system-vc141-mt-x64-1_68 \
+            -llibboost_test_exec_monitor-vc141-mt-x64-1_68 \
+            -llibboost_thread-vc141-mt-x64-1_68 \
+            -llibboost_timer-vc141-mt-x64-1_68 \
+            -llibboost_type_erasure-vc141-mt-x64-1_68 \
+            -llibboost_unit_test_framework-vc141-mt-x64-1_68 \
+            -llibboost_wave-vc141-mt-x64-1_68 \
+            -llibboost_wserialization-vc141-mt-x64-1_68 \
+            -llibboost_zlib-vc141-mt-x64-1_68
 
     # 其他Release库
     LIBS += -lflann \

@@ -16,21 +16,21 @@
 
 
 class DataFetcher {
-public://task.Json:"taskID":{"modelID","path"(ÈÎÎñÎÄ¼ş¼ĞµØÖ·),"tolerance"}
+public://task.Json:"taskID":{"modelID","path"(ä»»åŠ¡æ–‡ä»¶å¤¹åœ°å€),"tolerance"}
     QJsonObject manifest;//manifest.Json:"modelID":{"modelName,"modelPath","cloudPath"}
     QString TaskAddress = "./taskList.json";
     QString ManifestAddress = ":/json_config/manifest.json";
     bool loadManifest(QString path);
-    bool createTask(QString path, QString modelID, double tolerance, QString taskID);//ĞèÒªÊäÈëÄ¿±êÎÄ¼ş¼ĞµØÖ·path
-    bool getDesignPath(QString modelID, QString *designPath);//Éè¼ÆÊı¾İ
-    bool getMeasurePath(QString modelID, QString *measurePath);//²âÁ¿Êı¾İ
-    QStringList scanTask();//È¥³ıÎŞĞ§ÈÎÎñ£¬·µ»ØÈÎÎñÁĞ±í
+    bool createTask(QString path, QString modelID, double tolerance, QString taskID);//éœ€è¦è¾“å…¥ç›®æ ‡æ–‡ä»¶å¤¹åœ°å€path
+    bool getDesignPath(QString modelID, QString *designPath);//è®¾è®¡æ•°æ®
+    bool getMeasurePath(QString modelID, QString *measurePath);//æµ‹é‡æ•°æ®
+    QStringList scanTask();//å»é™¤æ— æ•ˆä»»åŠ¡ï¼Œè¿”å›ä»»åŠ¡åˆ—è¡¨
 private:
     bool generateNewTaskID(QJsonObject taskJson, QString *taskID);
 };
 
-/*½«resources/json.qrc/json_config/manifest.jsonÖĞµÄµØÖ·¸ÄÎª×Ô¼ºµçÄÔÉÏÎÄ¼şµÄ¾ø¶ÔµØÖ·
- * Ê¹ÓÃÊ¾Àı
+/*å°†resources/json.qrc/json_config/manifest.jsonä¸­çš„åœ°å€æ”¹ä¸ºè‡ªå·±ç”µè„‘ä¸Šæ–‡ä»¶çš„ç»å¯¹åœ°å€
+ * ä½¿ç”¨ç¤ºä¾‹
 main(int argc, char* argv[])
 {
     DataFetcher tester =  DataFetcher();

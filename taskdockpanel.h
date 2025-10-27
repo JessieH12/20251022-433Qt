@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QListWidget>
+#include <QFileSystemWatcher>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class TaskDockPanel; }
@@ -32,6 +33,7 @@ private:
     QString makeTaskId() const;
     void updateCurrentTask(const QString &tpl, const QString &tid);
     void showTaskResult(const QString &taskDir);
+    QFileSystemWatcher *watcher = nullptr;  //文件夹监视器
 };
 
 #endif // TASKDOCKPANEL_H

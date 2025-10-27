@@ -31,7 +31,7 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
         return true;
     }
     else {
-        qWarning() << "´æÔÚ´íÎóµÄÎÄ¼þµØÖ·";
+        qWarning() << "å­˜åœ¨é”™è¯¯çš„æ–‡ä»¶åœ°å€";
         return false;
     }
 
@@ -61,7 +61,7 @@ QStringList DataFetcher::scanTask() {
 
 bool DataFetcher::getDesignPath(QString modelID, QString *measurePath) {
     if (!this->manifest.contains(modelID)) {
-        *measurePath = "²»´æÔÚ¸ÃÄ£ÐÍµÄÐÅÏ¢";
+        *measurePath = "ä¸å­˜åœ¨è¯¥æ¨¡åž‹çš„ä¿¡æ¯";
         return false;
     }
     *measurePath = manifest[modelID].toObject()["designPath"].toString();
@@ -70,7 +70,7 @@ bool DataFetcher::getDesignPath(QString modelID, QString *measurePath) {
 
 bool DataFetcher::getMeasurePath(QString modelID, QString *measurePath) {
     if (!this->manifest.contains(modelID)) {
-        *measurePath = "²»´æÔÚ¸ÃÄ£ÐÍµÄÐÅÏ¢";
+        *measurePath = "ä¸å­˜åœ¨è¯¥æ¨¡åž‹çš„ä¿¡æ¯";
         return false;
     }
     *measurePath = manifest[modelID].toObject()["measurePath"].toString();
@@ -94,7 +94,7 @@ bool DataFetcher::generateNewTaskID(QJsonObject taskJson, QString *taskID) {
         newID = QString("T%1").arg(newNumber, 3, 10, QChar('0'));
         newNumber++;
         if (newNumber > 999) {
-            qWarning() << "TaskID ÊýÁ¿ÒÑ´ïµ½ÉÏÏÞ";
+            qWarning() << "TaskID æ•°é‡å·²è¾¾åˆ°ä¸Šé™";
             return false;
         }
     } while (existingIDs.contains(newID));

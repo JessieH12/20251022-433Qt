@@ -33,7 +33,7 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
         return true;
     }
     else {
-        qWarning() << "   ڴ     ļ   ַ";
+        qWarning() << "存在错误的文件地址";
         return false;
     }
 
@@ -63,7 +63,7 @@ QStringList DataFetcher::scanTask() {
 
 bool DataFetcher::getDesignPath(QString modelID, QString *measurePath) {
     if (!this->manifest.contains(modelID)) {
-        *measurePath = "     ڸ ģ ͵   Ϣ";
+        *measurePath = "不存在该模型的信息";
         return false;
     }
     *measurePath = manifest[modelID].toObject()["designPath"].toString();
@@ -72,7 +72,7 @@ bool DataFetcher::getDesignPath(QString modelID, QString *measurePath) {
 
 bool DataFetcher::getMeasurePath(QString modelID, QString *measurePath) {
     if (!this->manifest.contains(modelID)) {
-        *measurePath = "     ڸ ģ ͵   Ϣ";
+        *measurePath = "不存在该模型的信息";
         return false;
     }
     *measurePath = manifest[modelID].toObject()["measurePath"].toString();
@@ -96,7 +96,7 @@ bool DataFetcher::generateNewTaskID(QJsonObject taskJson, QString *taskID) {
         newID = QString("T%1").arg(newNumber, 3, 10, QChar('0'));
         newNumber++;
         if (newNumber > 999) {
-            qWarning() << "TaskID      Ѵﵽ    ";
+            qWarning() << "TaskID 数量已达到上限";
             return false;
         }
     } while (existingIDs.contains(newID));

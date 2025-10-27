@@ -1,7 +1,7 @@
 {
         "1": {
                 "modelName": "testmodel",
-                "designPath": "C:/Users/JiNG H/Desktop/433Qt/modelData/rabbit.pcd",
-                "measurePath": "C:/Users/JiNG H/Desktop/433Qt/modelData/face.ply"
+                "designPath": "C:\\Users\\renpx\\Desktop\\panel_cloud_coarse_unregistered.pcd",
+                "measurePath": "C:\\Users\\renpx\\Desktop\\panel_surface.stl"
         }
 }

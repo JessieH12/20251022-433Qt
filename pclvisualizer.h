@@ -618,7 +618,7 @@ public slots:
     //初始化数据
     void initPointCloud();
     //初始化m4
-    void initDockPanel();
+//    void initDockPanel();
     //连接信号槽
     void connectSS();
     //保存文件

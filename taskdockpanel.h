@@ -2,45 +2,36 @@
 #define TASKDOCKPANEL_H
 
 #include <QWidget>
-#include <QJsonObject>
+#include <QListWidget>
 
-class QComboBox;
-class QLineEdit;
-class QListWidget;
-class QLabel;
+QT_BEGIN_NAMESPACE
+namespace Ui { class TaskDockPanel; }
+QT_END_NAMESPACE
 
 class TaskDockPanel : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit TaskDockPanel(QWidget *parent = nullptr);
-	void loadHistoryTasks();        // 加载历史任务
-	void showTaskResult(const QString &taskDir); // 显示结果
+    explicit TaskDockPanel(QWidget *parent = nullptr);
+    ~TaskDockPanel();
 
 signals:
-	void taskApplied(const QString &templateName, const QString &taskId);
-	void historyTaskSelected(const QString &taskId);
+    void taskApplied(const QString &templateType, const QString &taskId);
+    void historyTaskSelected(const QString &taskId);
+    void logMessageRequested(const QString &title, const QString &message);
 
 private slots:
-	void onApplyTask();
-	void onRefreshHistory();
-	void onViewResult();
+    void onApplyTask();
+    void onRefreshHistory();
+    void onViewResult();
 
 private:
-	QString makeTaskId() const;
-	void updateCurrentTask(const QString &templateName, const QString &taskId);
+    Ui::TaskDockPanel *ui;
 
-	// 控件指针
-	QComboBox *comboTemplate;
-//	QLineEdit *editTaskId;
-	QLabel *labelCurTaskId;
-	QLabel *labelCurTemplate;
-	QLabel *labelCurStatus;
-	QListWidget *listHistory;
-	QLabel *labelMeanErr;
-	QLabel *labelMaxErr;
-	QLabel *labelPassRate;
+    QString makeTaskId() const;
+    void updateCurrentTask(const QString &tpl, const QString &tid);
+    void showTaskResult(const QString &taskDir);
 };
 
 #endif // TASKDOCKPANEL_H

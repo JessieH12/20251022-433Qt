@@ -603,7 +603,7 @@
              <string>RGB</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset>
               <normaloff>:/images/RGB.png</normaloff>:/images/RGB.png</iconset>
             </property>
            </item>
@@ -612,7 +612,7 @@
              <string>NONE</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset>
               <normaloff>:/images/grey.png</normaloff>:/images/grey.png</iconset>
             </property>
            </item>
@@ -1247,7 +1247,7 @@
   </widget>
   <action name="actionCameraview">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/camera.png</normaloff>:/images/camera.png</iconset>
    </property>
    <property name="text">
@@ -1259,7 +1259,7 @@
   </action>
   <action name="actionUp">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/up.png</normaloff>:/images/up.png</iconset>
    </property>
    <property name="text">
@@ -1268,7 +1268,7 @@
   </action>
   <action name="actionBottom">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/bottom.png</normaloff>:/images/bottom.png</iconset>
    </property>
    <property name="text">
@@ -1277,7 +1277,7 @@
   </action>
   <action name="actionFront">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/front.png</normaloff>:/images/front.png</iconset>
    </property>
    <property name="text">
@@ -1286,7 +1286,7 @@
   </action>
   <action name="actionBack">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
    </property>
    <property name="text">
@@ -1295,7 +1295,7 @@
   </action>
   <action name="actionLeft">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/left.png</normaloff>:/images/left.png</iconset>
    </property>
    <property name="text">
@@ -1304,7 +1304,7 @@
   </action>
   <action name="actionRight">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/right.png</normaloff>:/images/right.png</iconset>
    </property>
    <property name="text">
@@ -1313,7 +1313,7 @@
   </action>
   <action name="actionload_point_cloud">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/files/cloud.png</normaloff>:/images/files/cloud.png</iconset>
    </property>
    <property name="text">
@@ -1390,7 +1390,7 @@
   </action>
   <action name="actionBGColor">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/files/bgColor.png</normaloff>:/images/files/bgColor.png</iconset>
    </property>
    <property name="text">
@@ -1419,7 +1419,7 @@
   </action>
   <action name="actionTXT">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/files/txt.png</normaloff>:/images/files/txt.png</iconset>
    </property>
    <property name="text">
@@ -1443,7 +1443,7 @@
   </action>
   <action name="actionRotate0">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/rotate0.png</normaloff>:/images/rotate0.png</iconset>
    </property>
    <property name="text">
@@ -1455,7 +1455,7 @@
   </action>
   <action name="actionRotate90">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/rotate90.png</normaloff>:/images/rotate90.png</iconset>
    </property>
    <property name="text">
@@ -1467,7 +1467,7 @@
   </action>
   <action name="actionRotate180">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/rotate180.png</normaloff>:/images/rotate180.png</iconset>
    </property>
    <property name="text">
@@ -1479,7 +1479,7 @@
   </action>
   <action name="actionRotate270">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/rotate270.png</normaloff>:/images/rotate270.png</iconset>
    </property>
    <property name="text">
@@ -1491,7 +1491,7 @@
   </action>
   <action name="actionzoomIn">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/zoomout.png</normaloff>:/images/zoomout.png</iconset>
    </property>
    <property name="text">
@@ -1503,7 +1503,7 @@
   </action>
   <action name="actionzoomOut">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/zoomin.png</normaloff>:/images/zoomin.png</iconset>
    </property>
    <property name="text">
@@ -1515,7 +1515,7 @@
   </action>
   <action name="actionRedo">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/redo.png</normaloff>:/images/redo.png</iconset>
    </property>
    <property name="text">
@@ -1527,7 +1527,7 @@
   </action>
   <action name="actionUndo">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/undo.png</normaloff>:/images/undo.png</iconset>
    </property>
    <property name="text">
@@ -1539,7 +1539,7 @@
   </action>
   <action name="actionResetPos">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/reset.png</normaloff>:/images/reset.png</iconset>
    </property>
    <property name="text">
@@ -1551,7 +1551,7 @@
   </action>
   <action name="actionsettin">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/seting.png</normaloff>:/images/seting.png</iconset>
    </property>
    <property name="text">
@@ -1598,7 +1598,7 @@
   </action>
   <action name="actionaddCoordinate">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/coodinate.png</normaloff>:/images/coodinate.png</iconset>
    </property>
    <property name="text">
@@ -1874,7 +1874,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionbestRemoval">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/algorithm/KMeans.png</normaloff>:/images/algorithm/KMeans.png</iconset>
    </property>
    <property name="text">
@@ -1883,7 +1883,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionbestFiltering">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/algorithm/filter.png</normaloff>:/images/algorithm/filter.png</iconset>
    </property>
    <property name="text">
@@ -1892,7 +1892,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionbestRegistration">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/algorithm/pingjie.png</normaloff>:/images/algorithm/pingjie.png</iconset>
    </property>
    <property name="text">
@@ -1901,7 +1901,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionbestKeypoint">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/algorithm/binary.png</normaloff>:/images/algorithm/binary.png</iconset>
    </property>
    <property name="text">
@@ -1910,7 +1910,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionbestSurface">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/algorithm/matrix.png</normaloff>:/images/algorithm/matrix.png</iconset>
    </property>
    <property name="text">
@@ -1919,7 +1919,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionExportLog">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/files/log.png</normaloff>:/images/files/log.png</iconset>
    </property>
    <property name="text">

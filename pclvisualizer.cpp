@@ -37,9 +37,6 @@ PCLVisualizer::PCLVisualizer(QWidget* parent)
     //初始化点云数据
     initPointCloud();
 
-    //m4
-    initDockPanel();
-
 /********************单点云初始化**************************/
     // 给QVTK配置PCLViewer显示
     viewer_.reset(new pcl::visualization::PCLVisualizer("viewer", false));
@@ -97,6 +94,28 @@ PCLVisualizer::PCLVisualizer(QWidget* parent)
     ui->qvtkWidget0->update();
 
     showLogItem("PCV 系统", "系统初始化完成。");
+
+//==============================================================================
+    //校样功能部分
+//    auto dock = new QDockWidget("数据校样", this);
+//    dock->setWidget(new TaskDockPanel(this));
+
+//    addDockWidget(Qt::RightDockWidgetArea, dock);
+
+    // 将任务面板的日志信号连接到主窗口的日志显示函数
+    QDockWidget *dock = new QDockWidget("任务管理", this);
+    TaskDockPanel *panel = new TaskDockPanel(dock);
+    dock->setWidget(panel);
+    addDockWidget(Qt::RightDockWidgetArea, dock);
+
+    //这里要添加连接语句
+    connect(panel, &TaskDockPanel::logMessageRequested,
+            this, [this](const QString &title, const QString &msg){
+                this->showLogItem(title, msg);
+            });
+
+    showLogItem("校样功能", "功能初始化完成。");
+//==============================================================================
 }
 
 PCLVisualizer::~PCLVisualizer()
@@ -437,24 +456,6 @@ PCLVisualizer::connectSS()
                 &PCLVisualizer::onFileFormatChanged);
 */
 }
-//m4
-/*
-void PCLVisualizer::onFileFormatChanged(int index)
-{
-    QString format = ui->comboBox_fileFormat->currentText();
-
-    // 根据格式筛选右侧文件列表
-    QList<QListWidgetItem*> items = ui->filesList->findItems("." + format.toLower(), Qt::MatchContains);
-    if (!items.isEmpty()) {
-        ui->filesList->setCurrentItem(items.first());
-        QString fileName = items.first()->text();
-        //loadPointCloud(fileName); // 这里调用你的加载函数
-    }
-    else {
-        qDebug() << "没有找到该文件:" << format;
-    }
-}
-*/
 
 void
 PCLVisualizer::savePCDFile()
@@ -1925,22 +1926,4 @@ PCLVisualizer::on_actionvol_triggered()
 {
     QMessageBox::information(
         this, "几何属性提取成功", "表面积、体积等计算完成", "确定");
-}
-
-//M4
-void PCLVisualizer::initDockPanel()
-{
-    QDockWidget *dock = new QDockWidget("任务控制台", this);
-    dock->setAllowedAreas(Qt::RightDockWidgetArea);
-    dock->setFeatures(QDockWidget::NoDockWidgetFeatures);
-
-    TaskDockPanel *panel = new TaskDockPanel(dock);
-    dock->setWidget(panel);
-
-    addDockWidget(Qt::RightDockWidgetArea, dock);
-
-    connect(panel, &TaskDockPanel::taskApplied, this, [=](const QString &tpl, const QString &tid) {
-        qDebug() << "[任务申请]" << tpl << tid;
-        // TODO: 未来此处调用 A 任务执行逻辑
-        });
 }

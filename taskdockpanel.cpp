@@ -10,6 +10,7 @@
 #include <QJsonArray>
 #include <QDebug>
 #include <QTimer>
+#include "DataFetcher.h"
 
 
 TaskDockPanel::TaskDockPanel(QWidget *parent)
@@ -41,6 +42,21 @@ TaskDockPanel::TaskDockPanel(QWidget *parent)
         emit historyTaskSelected(item->text());
     });
 
+    //自动监视 tasks 目录变化并刷新
+    QString tasksDir = QDir::currentPath() + "/tasks";
+    QDir().mkpath(tasksDir);  // 确保 tasks 目录存在
+
+    watcher = new QFileSystemWatcher(this);
+    watcher->addPath(tasksDir);
+
+    connect(watcher, &QFileSystemWatcher::directoryChanged, this, [=](const QString &path) {
+        emit logMessageRequested("校样功能", QString("检测到任务目录变动：%1").arg(path));
+        onRefreshHistory();
+    });
+
+    emit logMessageRequested("校样功能", QString("任务目录监视已启动：%1").arg(tasksDir));
+
+    // 程序启动后立即刷新一次历史任务列表
     QTimer::singleShot(0, this, &TaskDockPanel::onRefreshHistory);
 //    onRefreshHistory();
 }
@@ -57,7 +73,7 @@ QString TaskDockPanel::makeTaskId() const {
 
 //显示任务申请成功，开始运行校样
 void TaskDockPanel::onApplyTask() {
-    QString tpl = ui->comboTemplate->currentText();
+/*    QString tpl = ui->comboTemplate->currentText();
     QString tid = makeTaskId();
     QApplication::clipboard()->setText(tid);
 
@@ -69,7 +85,35 @@ void TaskDockPanel::onApplyTask() {
 
     // 在主窗口日志输出中显示
     emit logMessageRequested("校样功能",
-                             QString("任务申请成功，任务ID：%1").arg(tid));
+                             QString("任务申请成功，任务ID：%1").arg(tid));*/
+
+    QString tid = makeTaskId();  // 自动生成任务ID
+    QString basePath = QDir::currentPath() + "/tasks";
+    QString taskPath = basePath + "/" + tid;
+
+    // 确保任务目录存在
+    QDir().mkpath(taskPath);
+
+    emit logMessageRequested("校样功能",
+                             QString("任务：%1 开始获取理想模型与实测模型").arg(tid));
+
+//=====DataFetcher功能=================================================================================================
+
+    // 创建 DataFetcher 实例
+    DataFetcher tester;
+    QStringList keyList = tester.scanTask();
+    tester.loadManifest(tester.ManifestAddress);
+
+    // createTask(保存路径, 模型id, 精度, 任务id指针)
+    tester.createTask(basePath, "2", 10, tid);
+
+    emit logMessageRequested("校样功能",
+                             QString("生成当前任务目录：%1").arg(taskPath));
+
+    // 输出结果提示
+    QMessageBox::information(this, "任务创建完成",
+                             QString("任务 %1 已生成，路径：\n%2").arg(tid, taskPath));
+//=====DataFetcher功能=================================================================================================
 }
 
 //更新当前任务状态

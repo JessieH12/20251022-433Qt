@@ -11,7 +11,9 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
     QJsonObject isoTaskJson;
     QString taskPath = path + "/" + taskID;
     QDir dir(taskPath);
-    if (!dir.exists()) {dir.mkpath(".");}
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
     bool res = JsonHandler().readJson(this->TaskAddress, &taskJson);
     QString designPath, measurePath;
     if (this->getDesignPath(modelID, &designPath) && this->getMeasurePath(modelID, &measurePath)) {

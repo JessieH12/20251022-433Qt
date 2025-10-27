@@ -1,7 +1,7 @@
 {
         "1": {
                 "modelName": "testmodel",
-                "designPath": "F:/QTproject/modelData/rabbit.pcd",
-                "measurePath": "F:/QTproject/modelData/face.ply"
+                "designPath": "C:/Users/JiNG H/Desktop/433Qt/modelData/rabbit.pcd",
+                "measurePath": "C:/Users/JiNG H/Desktop/433Qt/modelData/face.ply"
         }
 }

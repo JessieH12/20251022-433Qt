@@ -15,6 +15,7 @@
 //M4
 #include "taskdockpanel.h"
 #include <QDockWidget>
+#include "DataFetcher.h"
 
 PCLVisualizer::PCLVisualizer(QWidget* parent)
     : QMainWindow(parent)

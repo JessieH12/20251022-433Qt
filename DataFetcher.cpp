@@ -1,4 +1,8 @@
-#include<DataFetcher.h>
+#include "DataFetcher.h"
+
+DataFetcher::DataFetcher(QObject *parent)
+    : QObject(parent)
+{}
 
 bool DataFetcher::loadManifest(QString path){
     bool res = JsonHandler().readJson(path, &this->manifest);
@@ -7,6 +11,10 @@ bool DataFetcher::loadManifest(QString path){
 
 bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QString taskID)
 {
+    emit logMessageRequested("校样功能",
+                                 QString("任务 %1 开始创建（模型ID=%2，公差=%3）")
+                                 .arg(taskID, modelID).arg(tolerance));
+
     QJsonObject taskJson = QJsonObject();
     QJsonObject isoTaskJson;
     QString taskPath = path + "/" + taskID;
@@ -14,11 +22,28 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
     if (!dir.exists()) {
         dir.mkpath(".");
     }
+
     bool res = JsonHandler().readJson(this->TaskAddress, &taskJson);
     QString designPath, measurePath;
     if (this->getDesignPath(modelID, &designPath) && this->getMeasurePath(modelID, &measurePath)) {
+        bool designExists  = QFile::exists(designPath);
+        bool measureExists = QFile::exists(measurePath);
+
+        if (!designExists || !measureExists) {
+            if (!designExists)
+                emit logMessageRequested("校样功能",
+                                         QString("❌ 理想模型文件不存在：%1").arg(designPath));
+            if (!measureExists)
+                emit logMessageRequested("校样功能",
+                                         QString("❌ 实测模型文件不存在：%1").arg(measurePath));
+
+            emit logMessageRequested("校样功能", "❌ 任务创建终止：缺少模型文件。");
+            return false;
+        }
+
         QString measureFileName = QFileInfo(measurePath).fileName();
         QString designFileName = QFileInfo(designPath).fileName();
+
         isoTaskJson["taskID"] = taskID;
         isoTaskJson["modelID"] = modelID;
         isoTaskJson["path"] = taskPath;
@@ -28,12 +53,20 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
         taskJson[taskID] = isoTaskJson;
         JsonHandler().writeJson(this->TaskAddress, taskJson);
         JsonHandler().writeJson(taskPath+"/task.json", isoTaskJson);
+        emit logMessageRequested("校样功能", "已写入任务元信息文件 task.json");
+
         QFile::copy(measurePath, taskPath + "/" + measureFileName);
         QFile::copy(designPath, taskPath + "/" + designFileName);
+        emit logMessageRequested("校样功能",
+                                     QString("模型文件已拷贝到任务目录：%1").arg(taskPath));
+
+        emit logMessageRequested("校样功能",
+                                     QString("任务 %1 创建完成 ✅").arg(taskID));
         return true;
     }
     else {
-        qWarning() << "存在错误的文件地址";
+        emit logMessageRequested("校样功能",
+                                         QString("❌ manifest 中未找到模型 %1 的路径信息").arg(modelID));
         return false;
     }
 
@@ -63,7 +96,7 @@ QStringList DataFetcher::scanTask() {
 
 bool DataFetcher::getDesignPath(QString modelID, QString *measurePath) {
     if (!this->manifest.contains(modelID)) {
-        *measurePath = "不存在该模型的信息";
+//        *measurePath = "不存在该模型的信息";
         return false;
     }
     *measurePath = manifest[modelID].toObject()["designPath"].toString();
@@ -72,7 +105,7 @@ bool DataFetcher::getDesignPath(QString modelID, QString *measurePath) {
 
 bool DataFetcher::getMeasurePath(QString modelID, QString *measurePath) {
     if (!this->manifest.contains(modelID)) {
-        *measurePath = "不存在该模型的信息";
+//        *measurePath = "不存在该模型的信息";
         return false;
     }
     *measurePath = manifest[modelID].toObject()["measurePath"].toString();

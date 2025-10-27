@@ -87,39 +87,49 @@ void TaskDockPanel::onApplyTask() {
     emit logMessageRequested("校样功能",
                              QString("任务申请成功，任务ID：%1").arg(tid));*/
 
-    QString tid = makeTaskId();  // 自动生成任务ID
-    QString basePath = QDir::currentPath() + "/tasks";
-    QString taskPath = basePath + "/" + tid;
+    QString taskType = ui->comboTemplate->currentText(); //样板类型
+    QString taskId = makeTaskId();  // 自动生成任务ID
 
+    QApplication::clipboard()->setText(taskId);
+
+    updateCurrentTask(taskType, taskId);
+    emit taskApplied(taskType, taskId);
+
+    taskId += "_" + taskType;
+
+    QString basePath = QDir::currentPath() + "/tasks";
+    QString taskPath = basePath + "/" + taskId;
     // 确保任务目录存在
     QDir().mkpath(taskPath);
 
-    emit logMessageRequested("校样功能",
-                             QString("任务：%1 开始获取理想模型与实测模型").arg(tid));
+//    emit logMessageRequested("校样功能",
+//                             QString("任务：%1 开始获取理想模型与实测模型").arg(tid));
 
 //=====DataFetcher功能=================================================================================================
 
     // 创建 DataFetcher 实例
-    DataFetcher tester;
-    QStringList keyList = tester.scanTask();
-    tester.loadManifest(tester.ManifestAddress);
+    DataFetcher *tester = new DataFetcher(this);
+
+    connect(tester, &DataFetcher::logMessageRequested,
+            this,    &TaskDockPanel::logMessageRequested);
+
+    QStringList keyList = tester->scanTask();
+    tester->loadManifest(tester->ManifestAddress);
 
     // createTask(保存路径, 模型id, 精度, 任务id指针)
-    tester.createTask(basePath, "2", 10, tid);
-
-    emit logMessageRequested("校样功能",
-                             QString("生成当前任务目录：%1").arg(taskPath));
+    tester->createTask(basePath, "1", 10, taskId);
 
     // 输出结果提示
     QMessageBox::information(this, "任务创建完成",
-                             QString("任务 %1 已生成，路径：\n%2").arg(tid, taskPath));
+                             QString("任务 %1 已创建！").arg(taskId));
 //=====DataFetcher功能=================================================================================================
+
 }
 
 //更新当前任务状态
-void TaskDockPanel::updateCurrentTask(const QString &tpl, const QString &tid) {
-    ui->labelCurTaskId->setText("任务ID：" + tid);
-    ui->labelCurTemplate->setText("样板类型：" + tpl);
+void TaskDockPanel::updateCurrentTask(const QString &taskType, const QString &taskId) {
+    ui->labelCurTaskId->setText("任务ID：" + taskId);
+    ui->labelCurTemplate->setText("样板类型：" + taskType);
     ui->labelCurStatus->setText("状态：已申请");
 }
 
@@ -127,10 +137,9 @@ void TaskDockPanel::updateCurrentTask(const QString &tpl, const QString &tid) {
 void TaskDockPanel::onRefreshHistory() {
     ui->listHistory->clear();
     QString baseDir = QDir::currentPath() + "/tasks";
-    qDebug() << "任务目录路径：" << baseDir;
 
-    emit logMessageRequested("校样功能",
-                             QString("任务目录路径：%1").arg(baseDir));
+//    emit logMessageRequested("校样功能",
+//                             QString("任务目录路径：%1").arg(baseDir));
 
     QDir dir(baseDir);
     if (!dir.exists()) {
@@ -155,8 +164,8 @@ void TaskDockPanel::onRefreshHistory() {
     }
 
     // 在主窗口日志输出中显示
-    emit logMessageRequested("校样功能",
-                             QString("历史任务显示完成"));
+//    emit logMessageRequested("校样功能",
+//                             QString("历史任务显示完成"));
 }
 
 //显示结果

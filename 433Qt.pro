@@ -70,8 +70,7 @@ INCLUDEPATH += $$PCL_ROOT/include/pcl-1.9 \
                $$PCL_ROOT/3rdParty/FLANN/include/flann \
                $$PCL_ROOT/3rdParty/OpenNI2/Include \
                $$PCL_ROOT/3rdParty/Qhull/include \
-               $$PCL_ROOT/3rdParty/VTK2/include/vtk-8.1\
-               $$PCL_ROOT/3rdParty/VTK/include/vtk-8.1
+               $$PCL_ROOT/3rdParty/VTK2/include/vtk-8.1
 
 
 # 库目录
@@ -308,48 +307,48 @@ CONFIG(debug, debug|release) {
             -lpcl_visualization_release
 
     # Boost Release库
-    LIBS += -lboost_atomic-vc141-mt-x64-1_68 \
-            -lboost_bzip2-vc141-mt-x64-1_68 \
-            -lboost_chrono-vc141-mt-x64-1_68 \
-            -lboost_container-vc141-mt-x64-1_68 \
-            -lboost_context-vc141-mt-x64-1_68 \
-            -lboost_coroutine-vc141-mt-x64-1_68 \
-            -lboost_date_time-vc141-mt-x64-1_68 \
-            -lboost_exception-vc141-mt-x64-1_68 \
-            -lboost_fiber-vc141-mt-x64-1_68 \
-            -lboost_filesystem-vc141-mt-x64-1_68 \
-            -lboost_graph-vc141-mt-x64-1_68 \
-            -lboost_graph_parallel-vc141-mt-x64-1_68 \
-            -lboost_iostreams-vc141-mt-x64-1_68 \
-            -lboost_locale-vc141-mt-x64-1_68 \
-            -lboost_log-vc141-mt-x64-1_68 \
-            -lboost_log_setup-vc141-mt-x64-1_68 \
-            -lboost_math_c99-vc141-mt-x64-1_68 \
-            -lboost_math_c99f-vc141-mt-x64-1_68 \
-            -lboost_math_c99l-vc141-mt-x64-1_68 \
-            -lboost_math_tr1-vc141-mt-x64-1_68 \
-            -lboost_math_tr1f-vc141-mt-x64-1_68 \
-            -lboost_math_tr1l-vc141-mt-x64-1_68 \
-            -lboost_mpi-vc141-mt-x64-1_68 \
-            -lboost_numpy27-vc141-mt-x64-1_68 \
-            -lboost_numpy37-vc141-mt-x64-1_68 \
-            -lboost_prg_exec_monitor-vc141-mt-x64-1_68 \
-            -lboost_program_options-vc141-mt-x64-1_68 \
-            -lboost_python27-vc141-mt-x64-1_68 \
-            -lboost_python37-vc141-mt-x64-1_68 \
-            -lboost_random-vc141-mt-x64-1_68 \
-            -lboost_regex-vc141-mt-x64-1_68 \
-            -lboost_serialization-vc141-mt-x64-1_68 \
-            -lboost_signals-vc141-mt-x64-1_68 \
-            -lboost_system-vc141-mt-x64-1_68 \
-            -lboost_test_exec_monitor-vc141-mt-x64-1_68 \
-            -lboost_thread-vc141-mt-x64-1_68 \
-            -lboost_timer-vc141-mt-x64-1_68 \
-            -lboost_type_erasure-vc141-mt-x64-1_68 \
-            -lboost_unit_test_framework-vc141-mt-x64-1_68 \
-            -lboost_wave-vc141-mt-x64-1_68 \
-            -lboost_wserialization-vc141-mt-x64-1_68 \
-            -lboost_zlib-vc141-mt-x64-1_68
+    LIBS += -llibboost_atomic-vc141-mt-x64-1_68 \
+            -llibboost_bzip2-vc141-mt-x64-1_68 \
+            -llibboost_chrono-vc141-mt-x64-1_68 \
+            -llibboost_container-vc141-mt-x64-1_68 \
+            -llibboost_context-vc141-mt-x64-1_68 \
+            -llibboost_coroutine-vc141-mt-x64-1_68 \
+            -llibboost_date_time-vc141-mt-x64-1_68 \
+            -llibboost_exception-vc141-mt-x64-1_68 \
+            -llibboost_fiber-vc141-mt-x64-1_68 \
+            -llibboost_filesystem-vc141-mt-x64-1_68 \
+            -llibboost_graph-vc141-mt-x64-1_68 \
+            -llibboost_graph_parallel-vc141-mt-x64-1_68 \
+            -llibboost_iostreams-vc141-mt-x64-1_68 \
+            -llibboost_locale-vc141-mt-x64-1_68 \
+            -llibboost_log-vc141-mt-x64-1_68 \
+            -llibboost_log_setup-vc141-mt-x64-1_68 \
+            -llibboost_math_c99-vc141-mt-x64-1_68 \
+            -llibboost_math_c99f-vc141-mt-x64-1_68 \
+            -llibboost_math_c99l-vc141-mt-x64-1_68 \
+            -llibboost_math_tr1-vc141-mt-x64-1_68 \
+            -llibboost_math_tr1f-vc141-mt-x64-1_68 \
+            -llibboost_math_tr1l-vc141-mt-x64-1_68 \
+            -llibboost_mpi-vc141-mt-x64-1_68 \
+            -llibboost_numpy27-vc141-mt-x64-1_68 \
+            -llibboost_numpy37-vc141-mt-x64-1_68 \
+            -llibboost_prg_exec_monitor-vc141-mt-x64-1_68 \
+            -llibboost_program_options-vc141-mt-x64-1_68 \
+            -llibboost_python27-vc141-mt-x64-1_68 \
+            -llibboost_python37-vc141-mt-x64-1_68 \
+            -llibboost_random-vc141-mt-x64-1_68 \
+            -llibboost_regex-vc141-mt-x64-1_68 \
+            -llibboost_serialization-vc141-mt-x64-1_68 \
+            -llibboost_signals-vc141-mt-x64-1_68 \
+            -llibboost_system-vc141-mt-x64-1_68 \
+            -llibboost_test_exec_monitor-vc141-mt-x64-1_68 \
+            -llibboost_thread-vc141-mt-x64-1_68 \
+            -llibboost_timer-vc141-mt-x64-1_68 \
+            -llibboost_type_erasure-vc141-mt-x64-1_68 \
+            -llibboost_unit_test_framework-vc141-mt-x64-1_68 \
+            -llibboost_wave-vc141-mt-x64-1_68 \
+            -llibboost_wserialization-vc141-mt-x64-1_68 \
+            -llibboost_zlib-vc141-mt-x64-1_68
 
     # 其他Release库
     LIBS += -lflann \
@@ -490,11 +489,19 @@ CONFIG(debug, debug|release) {
 
 # 部署设置（可选）
 # 定义源DLL目录和目标目录
-DLL_SOURCE_DIR = $$PWD/bin
-DLL_TARGET_DIR = $$OUT_PWD/$$CONFIGURATION/debug
 
-# 执行复制操作（Windows）
+CONFIG(debug, debug|release) {
+    # 执行复制操作（Windows）
+    DLL_SOURCE_DIR = $$PWD/bin/debug/
+    DLL_TARGET_DIR = $$OUT_PWD/$$CONFIGURATION/debug
+}
+
+CONFIG(release, debug|release) {
+    # 执行复制操作（Windows）
+    DLL_SOURCE_DIR = $$PWD/bin/release/
+    DLL_TARGET_DIR = $$OUT_PWD/$$CONFIGURATION/release
+}
+
 win32 {
     QMAKE_POST_LINK += $$escape_expand(\\n) xcopy /Y \"$$shell_path($$DLL_SOURCE_DIR)\\*.dll\" \"$$shell_path($$DLL_TARGET_DIR)\"
 }
-

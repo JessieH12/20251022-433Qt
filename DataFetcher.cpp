@@ -43,6 +43,7 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
 QStringList DataFetcher::scanTask() {
     QJsonObject taskJson = QJsonObject();
     QStringList keyList = {};
+    QStringList nameList = {};
     bool hasChange = false;
     if(JsonHandler().readJson(this->TaskAddress, &taskJson)){
         keyList = taskJson.keys();
@@ -57,12 +58,11 @@ QStringList DataFetcher::scanTask() {
             JsonHandler().writeJson(this->TaskAddress, taskJson);
             keyList = taskJson.keys();
         }
-        QStringList nameList = {};
         for (int i = 0;i < keyList.length();i++){
             nameList << (taskJson[keyList[i]].toObject()["taskName"].toString());
         }
     }
-    return keyList;
+    return nameList;
 }
 
 bool DataFetcher::getDesignPath(QString modelID, QString *measurePath) {

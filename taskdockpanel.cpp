@@ -11,6 +11,8 @@
 #include <QDebug>
 #include <QTimer>
 #include "DataFetcher.h"
+#include "AnalysisEngine.h"
+#include "reportgenerator.h"
 
 
 TaskDockPanel::TaskDockPanel(QWidget *parent)
@@ -88,42 +90,94 @@ void TaskDockPanel::onApplyTask() {
                              QString("任务申请成功，任务ID：%1").arg(tid));*/
 
     QString taskType = ui->comboTemplate->currentText(); //样板类型
-    QString taskId = makeTaskId();  // 自动生成任务ID
+    QString taskID = makeTaskId();  // 自动生成任务ID
 
-    QApplication::clipboard()->setText(taskId);
+    QApplication::clipboard()->setText(taskID);
 
-    updateCurrentTask(taskType, taskId);
-    emit taskApplied(taskType, taskId);
+    updateCurrentTask(taskType, taskID);
+    emit taskApplied(taskType, taskID);
 
-    taskId += "_" + taskType;
+//    taskId += "_" + taskType;
 
     QString basePath = QDir::currentPath() + "/tasks";
-    QString taskPath = basePath + "/" + taskId;
+    QString taskPath = basePath + "/" + taskID;
     // 确保任务目录存在
     QDir().mkpath(taskPath);
 
-//    emit logMessageRequested("校样功能",
-//                             QString("任务：%1 开始获取理想模型与实测模型").arg(tid));
-
-//=====DataFetcher功能=================================================================================================
+//=====DataFetcher模块=================================================================================================
 
     // 创建 DataFetcher 实例
-    DataFetcher *tester = new DataFetcher(this);
+    DataFetcher *data_fetcher = new DataFetcher(this);
 
-    connect(tester, &DataFetcher::logMessageRequested,
+    connect(data_fetcher, &DataFetcher::logMessageRequested,
             this,    &TaskDockPanel::logMessageRequested);
 
-    QStringList keyList = tester->scanTask();
-    tester->loadManifest(tester->ManifestAddress);
+    QStringList keyList = data_fetcher->scanTask();
+    data_fetcher->loadManifest(data_fetcher->ManifestAddress);
 
-    // createTask(保存路径, 模型id, 精度, 任务id指针)
-    tester->createTask(basePath, "1", 10, taskId);
+    // createTask(保存路径, 模型id, 精度, 任务id指针,任务名称)
+    QString taskName = taskType;
+    data_fetcher->createTask(basePath, "1", 10, taskID, taskName);
 
     // 输出结果提示
     QMessageBox::information(this, "任务创建完成",
-                             QString("任务 %1 已创建！").arg(taskId));
-//=====DataFetcher功能=================================================================================================
+                             QString("任务 %1 已创建！").arg(taskID));
+//=====DataFetcher模块=================================================================================================
 
+//=====AnalysisEngine模块=================================================================================================
+
+    AnalysisEngine *analysis_engine = new AnalysisEngine(this);
+
+    connect(analysis_engine, &AnalysisEngine::logMessageRequested,
+            this,    &TaskDockPanel::logMessageRequested);
+
+    emit logMessageRequested("校样功能", QString("校样分析开始"));
+
+    QString jsonPath = taskPath + "/task.json"; // JSON文件路径
+    QJsonObject jsonObj;
+    if (!JsonHandler::readJson(jsonPath, &jsonObj)) {
+        qDebug() << "无法读取JSON文件:" << jsonPath;
+        emit logMessageRequested("校样功能",
+                                     QString("❌ 任务：%1 无法读取JSON文件").arg(taskID));
+    }
+
+    // 从JSON中读取数据
+    taskID = jsonObj["taskID"].toString();
+    qDebug() << "taskID: " + taskID;
+    taskPath = jsonObj["path"].toString();
+    QString designName = jsonObj["designName"].toString();   // 点云文件名
+    QString measureName = jsonObj["measureName"].toString(); // 模型文件名
+
+    // 拼接路径
+    QString measuredCloudPath = taskPath + "/" + designName;  // 点云文件路径
+    QString idealModelPath = taskPath + "/" + measureName;    // 模型文件路径
+
+//    qDebug() << "开始分析任务:" << taskID;
+//    qDebug() << "理想模型路径:" << idealModelPath;
+//    qDebug() << "测量点云路径:" << measuredCloudPath;
+
+    emit logMessageRequested("校样功能",
+                                 QString("开始分析任务: %1").arg(taskID));
+    emit logMessageRequested("校样功能",
+                                 QString("理想模型路径: %1").arg(idealModelPath));
+    emit logMessageRequested("校样功能",
+                                 QString("测量点云路径: %1").arg(measuredCloudPath));
+
+    // 执行分析
+//    AnalysisEngine engine;
+    analysis_engine->runAnalysis(taskID.toStdString(),
+                       idealModelPath.toStdString(),
+                       measuredCloudPath.toStdString());
+
+    // 保存结果
+    QString resultPath = taskPath + "/result.json";
+    analysis_engine->saveResult(resultPath.toStdString());
+//=====AnalysisEngine模块=================================================================================================
+
+//====ReportGenerator模块=================================================================================================
+    ReportGenerator rg = ReportGenerator( taskPath +"/output.pdf");
+    rg.generatePDF(taskPath+"/result.json");
+//====ReportGenerator模块=================================================================================================
 }
 
 //更新当前任务状态
@@ -191,17 +245,17 @@ void TaskDockPanel::showTaskResult(const QString &taskDir) {
     QJsonObject obj = QJsonDocument::fromJson(f.readAll()).object();
     f.close();
 
-    double mean = obj["meanError"].toDouble();
-    double maxE = obj["maxError"].toDouble();
-    int total = obj["pointCount"].toInt();
-    QJsonArray points = obj["points"].toArray();
+    double mean = obj["平均偏差"].toDouble();
+    double maxE = obj["最大偏差"].toDouble();
+    double rate = obj["超差比例"].toDouble();
+//    QJsonArray points = obj["points"].toArray();
 
-    int exceed = 0;
-    for (auto v : points)
-        if (v.toObject()["distance"].toDouble() > 0.5) exceed++;
-    double passRate = total ? 100.0 * (1.0 - (double)exceed / total) : 0.0;
+//    int exceed = 0;
+//    for (auto v : points)
+//        if (v.toObject()["distance"].toDouble() > 0.5) exceed++;
+//    double passRate = total ? 100.0 * (1.0 - (double)exceed / total) : 0.0;
 
-    ui->labelMeanErr->setText("平均误差：" + QString::number(mean, 'f', 3));
-    ui->labelMaxErr->setText("最大误差：" + QString::number(maxE, 'f', 3));
-    ui->labelPassRate->setText("合格率：" + QString::number(passRate, 'f', 2) + "%");
+    ui->labelMeanErr->setText("平均偏差：" + QString::number(mean, 'f', 3));
+    ui->labelMaxErr->setText("最大偏差：" + QString::number(maxE, 'f', 3));
+    ui->labelPassRate->setText("超差比例" + QString::number(rate * 100, 'f', 2) + "%");
 }

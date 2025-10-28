@@ -9,7 +9,7 @@ bool DataFetcher::loadManifest(QString path){
     return res;
 }
 
-bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QString taskID)
+bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QString taskID, QString taskName)
 {
     emit logMessageRequested("校样功能",
                                  QString("任务 %1 开始创建（模型ID=%2，公差=%3）")
@@ -23,7 +23,8 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
         dir.mkpath(".");
     }
 
-    bool res = JsonHandler().readJson(this->TaskAddress, &taskJson);
+    JsonHandler().readJson(this->TaskAddress, &taskJson);
+
     QString designPath, measurePath;
     if (this->getDesignPath(modelID, &designPath) && this->getMeasurePath(modelID, &measurePath)) {
         bool designExists  = QFile::exists(designPath);
@@ -45,6 +46,7 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
         QString designFileName = QFileInfo(designPath).fileName();
 
         isoTaskJson["taskID"] = taskID;
+        isoTaskJson["taskName"] = taskName;
         isoTaskJson["modelID"] = modelID;
         isoTaskJson["path"] = taskPath;
         isoTaskJson["tolerance"] = tolerance;
@@ -75,6 +77,7 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
 QStringList DataFetcher::scanTask() {
     QJsonObject taskJson = QJsonObject();
     QStringList keyList = {};
+    QStringList nameList = {};
     bool hasChange = false;
     if(JsonHandler().readJson(this->TaskAddress, &taskJson)){
         keyList = taskJson.keys();
@@ -89,9 +92,11 @@ QStringList DataFetcher::scanTask() {
             JsonHandler().writeJson(this->TaskAddress, taskJson);
             keyList = taskJson.keys();
         }
-
+        for (int i = 0;i < keyList.length();i++){
+            nameList << (taskJson[keyList[i]].toObject()["taskName"].toString());
+        }
     }
-    return keyList;
+    return nameList;
 }
 
 bool DataFetcher::getDesignPath(QString modelID, QString *measurePath) {

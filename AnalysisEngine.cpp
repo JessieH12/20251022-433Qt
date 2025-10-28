@@ -1,4 +1,4 @@
-// AnalysisEngine.cpp  —— 支持中文输出（Qt 日志 + UTF-8）
+// AnalysisEngine.cpp  —— 使用qDebug模式输出
 #include "AnalysisEngine.h"
 #include <iostream>
 #include <fstream>
@@ -23,8 +23,12 @@
 #include <limits>
 #include <cstdio>
 #include <stdexcept>
-#include <QDebug>       // ✅ 使用 Qt 日志输出中文
+#include <QDebug>
 #include <QString>
+
+AnalysisEngine::AnalysisEngine(QObject *parent)
+    : QObject(parent)
+{}
 
 // Point3D 构造函数实现
 Point3D::Point3D(double x, double y, double z) : x(x), y(y), z(z) {}
@@ -43,6 +47,9 @@ AnalysisEngine::AnalysisEngine() = default;
 void AnalysisEngine::loadStlFile(const std::string& path) {
     std::ifstream file(path, std::ios::binary);
     if (!file.is_open()) {
+//        qDebug() << "无法打开STL文件:" << QString::fromStdString(path);
+        emit logMessageRequested("校样功能",
+                                 QString("❌ 无法打开STL文件: %1").arg(QString::fromStdString(path)));
         throw std::runtime_error(std::string("无法打开STL文件: ") + path);
     }
 
@@ -74,7 +81,9 @@ void AnalysisEngine::loadStlFile(const std::string& path) {
         file.seekg(2, std::ios::cur);
     }
 
-    qInfo().noquote() << QStringLiteral("加载STL文件数据:") << stlPoints.size() << QStringLiteral("个顶点");
+//    qDebug() << "加载STL文件数据:" << stlPoints.size() << "个顶点";
+    emit logMessageRequested("校样功能",
+                             QString("加载STL文件数据: %1 个点").arg(stlPoints.size()));
 
     // 根据当前加载的是理想模型还是测量数据来决定存储到哪个向量
     if (idealModelPoints.empty() && measuredCloudPoints.empty()) {
@@ -82,6 +91,9 @@ void AnalysisEngine::loadStlFile(const std::string& path) {
     } else if (!idealModelPoints.empty() && measuredCloudPoints.empty()) {
         measuredCloudPoints = stlPoints;       // 第二次：测量点云
     } else {
+//        qDebug() << "点云数据已全部加载，无法再次加载";
+        emit logMessageRequested("校样功能",
+                                     QString("点云数据已全部加载，无法再次加载"));
         throw std::runtime_error("点云数据已全部加载，无法再次加载");
     }
 }
@@ -90,6 +102,9 @@ void AnalysisEngine::loadStlFile(const std::string& path) {
 void AnalysisEngine::loadPcdFile(const std::string& path) {
     std::ifstream file(path);
     if (!file.is_open()) {
+//        qDebug() << "无法打开PCD文件:" << QString::fromStdString(path);
+        emit logMessageRequested("校样功能",
+                                 QString("❌ 无法打开PCD文件: %1").arg(QString::fromStdString(path)));
         throw std::runtime_error(std::string("无法打开PCD文件: ") + path);
     }
 
@@ -118,13 +133,18 @@ void AnalysisEngine::loadPcdFile(const std::string& path) {
         if (pointCount > 0 && tempPoints.size() >= static_cast<size_t>(pointCount)) break;
     }
 
-    qInfo().noquote() << QStringLiteral("加载PCD点云数据:") << tempPoints.size() << QStringLiteral("个点");
+//    qDebug() << "加载PCD点云数据:" << tempPoints.size() << "个点";
+    emit logMessageRequested("校样功能",
+                             QString("加载PCD点云数据: %1 个点").arg(tempPoints.size()));
 
     if (idealModelPoints.empty() && measuredCloudPoints.empty()) {
         idealModelPoints = tempPoints;
     } else if (!idealModelPoints.empty() && measuredCloudPoints.empty()) {
         measuredCloudPoints = tempPoints;
     } else {
+//        qDebug() << "点云数据已全部加载，无法再次加载";
+        emit logMessageRequested("校样功能",
+                                     QString("点云数据已全部加载，无法再次加载"));
         throw std::runtime_error("点云数据已全部加载，无法再次加载");
     }
 }
@@ -139,16 +159,23 @@ void AnalysisEngine::loadFile(const std::string& path) {
     } else if (lowerPath.find(".pcd") != std::string::npos) {
         loadPcdFile(path);
     } else {
+//        qDebug() << "不支持的文件格式:" << QString::fromStdString(path);
+        emit logMessageRequested("校样功能",
+                                     QString("❌ 不支持的文件格式: %1 个点").arg(QString::fromStdString(path)));
         throw std::runtime_error(std::string("不支持的文件格式: ") + path);
     }
 }
 
 // 点云配准算法实现 - ICP迭代最近点算法
 void AnalysisEngine::performICPRegistration() {
-    qInfo().noquote() << QStringLiteral("执行ICP点云配准...");
+//    qDebug() << "执行ICP点云配准...";
+    emit logMessageRequested("校样功能",
+                                 QString("执行ICP点云配准..."));
 
     if (idealModelPoints.empty() || measuredCloudPoints.empty()) {
-        qCritical().noquote() << QStringLiteral("错误: 点云数据为空，无法进行配准!");
+//        qDebug() << "错误: 点云数据为空，无法进行配准!";
+        emit logMessageRequested("校样功能",
+                                     QString("错误: 点云数据为空，无法进行配准!"));
         return;
     }
 
@@ -188,7 +215,9 @@ void AnalysisEngine::performICPRegistration() {
         }
 
         if (correspondences.size() < 3) {
-            qCritical().noquote() << QStringLiteral("错误: 对应点数量不足，无法计算变换!");
+//            qDebug() << "错误: 对应点数量不足，无法计算变换!";
+            emit logMessageRequested("校样功能",
+                                             QString("错误: 对应点数量不足，无法计算变换!"));
             break;
         }
 
@@ -249,13 +278,14 @@ void AnalysisEngine::performICPRegistration() {
         }
         error /= correspondences.size();
 
-        qInfo().noquote() << QStringLiteral("ICP迭代")
-                          << (iter + 1)
-                          << QStringLiteral("，均方误差:")
-                          << error;
+//        qDebug() << "ICP迭代" << (iter + 1) << "，均方误差:" << error;
+        emit logMessageRequested("校样功能",
+                                         QString("ICP迭代 %1 ，均方误差: %2").arg(iter + 1, error));
 
         if (error < tolerance) {
-            qInfo().noquote() << QStringLiteral("ICP收敛于第") << (iter + 1) << QStringLiteral("次迭代");
+//            qDebug() << "ICP收敛于第" << (iter + 1) << "次迭代";
+            emit logMessageRequested("校样功能",
+                                             QString("ICP收敛于第 %1 次迭代").arg(iter + 1));
             break;
         }
 
@@ -271,12 +301,14 @@ void AnalysisEngine::performICPRegistration() {
         measuredCloudPoints[i].z = tp.z();
     }
 
-    qInfo().noquote() << QStringLiteral("ICP配准完成!");
+//    qDebug() << "ICP配准完成!";
+    emit logMessageRequested("校样功能", QString("ICP配准完成!"));
 }
 
 // 模拟对齐算法（保留原始方法作为备选）
 void AnalysisEngine::alignModelAndCloud() {
-    qInfo().noquote() << QStringLiteral("执行理想模型与测量点云对齐...");
+//    qDebug() << "执行理想模型与测量点云对齐...";
+    emit logMessageRequested("校样功能", QString("执行理想模型与测量点云对齐..."));
 
     if (idealModelPoints.empty() || measuredCloudPoints.empty()) return;
 
@@ -304,13 +336,15 @@ void AnalysisEngine::alignModelAndCloud() {
     double tz = idealCenter.z - measuredCenter.z;
     for (auto& p : measuredCloudPoints) { p.x += tx; p.y += ty; p.z += tz; }
 
-    qInfo().noquote() << QStringLiteral("几何中心对齐完成，平移向量 (")
-                      << tx << "," << ty << "," << tz << ")";
+//    qDebug() << "几何中心对齐完成，平移向量 (" << tx << "," << ty << "," << tz << ")";
+    emit logMessageRequested("校样功能", QString("几何中心对齐完成，平移向量 ( %1， %2， %3)").arg(tx, ty, tz));
 }
 
 // 计算偏差
 void AnalysisEngine::computeDeviation() {
-    qInfo().noquote() << QStringLiteral("计算偏差...");
+//    qDebug() << "计算偏差...";
+    emit logMessageRequested("校样功能", QString("计算偏差..."));
+
 
     deviations.clear();
     deviations.reserve(measuredCloudPoints.size());
@@ -324,8 +358,9 @@ void AnalysisEngine::computeDeviation() {
         deviations.push_back(minDist);
     }
 
-    qInfo().noquote() << QStringLiteral("偏差计算完成，共计算")
-                      << deviations.size() << QStringLiteral("个偏差值");
+//    qDebug() << "偏差计算完成，共计算" << deviations.size() << "个偏差值";
+    emit logMessageRequested("校样功能", QString("偏差计算完成，共计算 %1 个偏差值").arg(deviations.size()));
+
 }
 
 // 计算统计信息并返回JSON格式字符串
@@ -347,15 +382,15 @@ QJsonObject AnalysisEngine::buildStatisticsJson() const {
     double meanDev = sum / deviations.size();
     double outOfTolRatio = static_cast<double>(outOfToleranceCount) / deviations.size();
 
-    obj.insert(QStringLiteral("平均偏差"), meanDev);
-    obj.insert(QStringLiteral("最大偏差"), maxDev);
-    obj.insert(QStringLiteral("超差比例"), outOfTolRatio);
-    obj.insert(QStringLiteral("超差数量"), outOfToleranceCount);
-    obj.insert(QStringLiteral("总检测点数量"), static_cast<int>(deviations.size()));
-    obj.insert(QStringLiteral("公差阈值"), tolerance);
-    obj.insert(QStringLiteral("单位"), QStringLiteral("mm"));
-    obj.insert(QStringLiteral("理想模型点数量"), static_cast<int>(idealModelPoints.size()));
-    obj.insert(QStringLiteral("实测点云数量"), static_cast<int>(measuredCloudPoints.size()));
+    obj.insert("平均偏差", meanDev);
+    obj.insert("最大偏差", maxDev);
+    obj.insert("超差比例", outOfTolRatio);
+    obj.insert("超差数量", outOfToleranceCount);
+    obj.insert("总检测点数量", static_cast<int>(deviations.size()));
+    obj.insert("公差阈值", tolerance);
+    obj.insert("单位", "mm");
+    obj.insert("理想模型点数量", static_cast<int>(idealModelPoints.size()));
+    obj.insert("实测点云数量", static_cast<int>(measuredCloudPoints.size()));
     return obj;
 }
 
@@ -364,7 +399,8 @@ void AnalysisEngine::runAnalysis(const std::string& taskId,
                                  const std::string& idealModelPath,
                                  const std::string& measuredCloudPath) {
     this->taskID = taskId;
-    qInfo().noquote() << QStringLiteral("开始分析任务:") << QString::fromStdString(taskId);
+
+    //qDebug() << "开始分析任务:" << QString::fromStdString(this->taskID);
 
     idealModelPoints.clear();
     measuredCloudPoints.clear();
@@ -375,7 +411,8 @@ void AnalysisEngine::runAnalysis(const std::string& taskId,
     performICPRegistration();
     computeDeviation();
 
-    qInfo().noquote() << QStringLiteral("分析任务完成:") << QString::fromStdString(taskId);
+//    qDebug() << "分析任务完成:";
+    emit logMessageRequested("校样功能", QString("分析任务完成!"));
 }
 
 // 生成当前时间戳字符串
@@ -398,7 +435,9 @@ std::string AnalysisEngine::getCurrentTimestamp() {
 // 保存结果
 void AnalysisEngine::saveResult(const std::string& path) {
     if (deviations.empty()) {
-        qInfo().noquote() << QStringLiteral("没有偏差数据可保存");
+//        qDebug() << "没有偏差数据可保存";
+        emit logMessageRequested("校样功能", QString("没有偏差数据可保存"));
+
         return;
     }
 
@@ -410,8 +449,10 @@ void AnalysisEngine::saveResult(const std::string& path) {
     json.insert("statistics", statsObj);
 
     if (JsonHandler::writeJson(QString::fromStdString(path), json)) {
-        qInfo().noquote() << QStringLiteral("分析结果已保存到:") << QString::fromStdString(path);
+//        qDebug() << "分析结果已保存到:" << QString::fromStdString(path);
+        emit logMessageRequested("校样功能", QString("分析结果已保存到: %1").arg(QString::fromStdString(path)));
     } else {
-        qCritical().noquote() << QStringLiteral("保存结果失败:") << QString::fromStdString(path);
+//        qDebug() << "保存结果失败:" << QString::fromStdString(path);
+        emit logMessageRequested("校样功能", QString("保存结果失败: %1").arg(QString::fromStdString(path)));
     }
 }

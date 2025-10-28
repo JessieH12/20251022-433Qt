@@ -5,9 +5,9 @@
 const QString title = "检测报告";
 const QString titleFont = "宋体";
 const QString articleFont = "宋体";
-const QString taskId = "task_id";
+const QString taskId = "task_ID";
 const QString analysisType = "analysis_type";
-const QString analysisTimestamp = "analysis_timestamp";
+const QString analysisTimestamp = "timestamp";
 
 const QString statistics = "statistics";
 

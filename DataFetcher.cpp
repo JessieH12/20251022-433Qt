@@ -5,7 +5,7 @@ bool DataFetcher::loadManifest(QString path){
     return res;
 }
 
-bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QString taskID)
+bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QString taskID, QString taskName)
 {
     QJsonObject taskJson = QJsonObject();
     QJsonObject isoTaskJson;
@@ -14,12 +14,13 @@ bool DataFetcher::createTask(QString path, QString modelID, double tolerance, QS
     if (!dir.exists()) {
         dir.mkpath(".");
     }
-    bool res = JsonHandler().readJson(this->TaskAddress, &taskJson);
+    JsonHandler().readJson(this->TaskAddress, &taskJson);
     QString designPath, measurePath;
     if (this->getDesignPath(modelID, &designPath) && this->getMeasurePath(modelID, &measurePath)) {
         QString measureFileName = QFileInfo(measurePath).fileName();
         QString designFileName = QFileInfo(designPath).fileName();
         isoTaskJson["taskID"] = taskID;
+        isoTaskJson["taskName"] = taskName;
         isoTaskJson["modelID"] = modelID;
         isoTaskJson["path"] = taskPath;
         isoTaskJson["tolerance"] = tolerance;
@@ -56,7 +57,10 @@ QStringList DataFetcher::scanTask() {
             JsonHandler().writeJson(this->TaskAddress, taskJson);
             keyList = taskJson.keys();
         }
-
+        QStringList nameList = {};
+        for (int i = 0;i < keyList.length();i++){
+            nameList << (taskJson[keyList[i]].toObject()["taskName"].toString());
+        }
     }
     return keyList;
 }

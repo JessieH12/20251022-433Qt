@@ -125,7 +125,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>申请数据并校样</string>
+      <string>校样</string>
      </property>
     </widget>
    </item>

@@ -56,11 +56,8 @@ TaskDockPanel::TaskDockPanel(QWidget *parent)
         onRefreshHistory();
     });
 
-    emit logMessageRequested("校样功能", QString("任务目录监视已启动：%1").arg(tasksDir));
-
     // 程序启动后立即刷新一次历史任务列表
     QTimer::singleShot(0, this, &TaskDockPanel::onRefreshHistory);
-//    onRefreshHistory();
 }
 
 TaskDockPanel::~TaskDockPanel()
@@ -70,25 +67,11 @@ TaskDockPanel::~TaskDockPanel()
 
 //自动生成任务id
 QString TaskDockPanel::makeTaskId() const {
-    return QString("T%1").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmmss"));
+    return QString("T%1").arg(QDateTime::currentDateTime().toString("yyyy_MM_dd_HH_mm_ss"));
 }
 
 //显示任务申请成功，开始运行校样
 void TaskDockPanel::onApplyTask() {
-/*    QString tpl = ui->comboTemplate->currentText();
-    QString tid = makeTaskId();
-    QApplication::clipboard()->setText(tid);
-
-    updateCurrentTask(tpl, tid);
-    emit taskApplied(tpl, tid);
-
-    QMessageBox::information(this, "任务申请成功",
-                             QString("样板：%1\n任务ID：%2").arg(tpl, tid));
-
-    // 在主窗口日志输出中显示
-    emit logMessageRequested("校样功能",
-                             QString("任务申请成功，任务ID：%1").arg(tid));*/
-
     QString taskType = ui->comboTemplate->currentText(); //样板类型
     QString taskID = makeTaskId();  // 自动生成任务ID
 
@@ -120,8 +103,7 @@ void TaskDockPanel::onApplyTask() {
     data_fetcher->createTask(basePath, "1", 10, taskID, taskName);
 
     // 输出结果提示
-    QMessageBox::information(this, "任务创建完成",
-                             QString("任务 %1 已创建！").arg(taskID));
+    QMessageBox::information(this, "任务创建完成", QString("任务 %1 已创建！").arg(taskID));
 //=====DataFetcher模块=================================================================================================
 
 //=====AnalysisEngine模块=================================================================================================
@@ -136,14 +118,12 @@ void TaskDockPanel::onApplyTask() {
     QString jsonPath = taskPath + "/task.json"; // JSON文件路径
     QJsonObject jsonObj;
     if (!JsonHandler::readJson(jsonPath, &jsonObj)) {
-        qDebug() << "无法读取JSON文件:" << jsonPath;
         emit logMessageRequested("校样功能",
                                      QString("❌ 任务：%1 无法读取JSON文件").arg(taskID));
     }
 
     // 从JSON中读取数据
     taskID = jsonObj["taskID"].toString();
-    qDebug() << "taskID: " + taskID;
     taskPath = jsonObj["path"].toString();
     QString designName = jsonObj["designName"].toString();   // 点云文件名
     QString measureName = jsonObj["measureName"].toString(); // 模型文件名
@@ -151,10 +131,6 @@ void TaskDockPanel::onApplyTask() {
     // 拼接路径
     QString measuredCloudPath = taskPath + "/" + designName;  // 点云文件路径
     QString idealModelPath = taskPath + "/" + measureName;    // 模型文件路径
-
-//    qDebug() << "开始分析任务:" << taskID;
-//    qDebug() << "理想模型路径:" << idealModelPath;
-//    qDebug() << "测量点云路径:" << measuredCloudPath;
 
     emit logMessageRequested("校样功能",
                                  QString("开始分析任务: %1").arg(taskID));
@@ -164,7 +140,6 @@ void TaskDockPanel::onApplyTask() {
                                  QString("测量点云路径: %1").arg(measuredCloudPath));
 
     // 执行分析
-//    AnalysisEngine engine;
     analysis_engine->runAnalysis(taskID.toStdString(),
                        idealModelPath.toStdString(),
                        measuredCloudPath.toStdString());
@@ -172,11 +147,21 @@ void TaskDockPanel::onApplyTask() {
     // 保存结果
     QString resultPath = taskPath + "/result.json";
     analysis_engine->saveResult(resultPath.toStdString());
+
 //=====AnalysisEngine模块=================================================================================================
 
+    //结果生成后，刷新历史记录
+    QMessageBox::information(this, "校样任务完成", QString("任务 %1 校样成功！").arg(taskID));
+    onRefreshHistory();
+
+    //显示结果数据
+    showTaskResult(taskPath);
+
 //====ReportGenerator模块=================================================================================================
+
     ReportGenerator rg = ReportGenerator( taskPath +"/output.pdf");
     rg.generatePDF(taskPath+"/result.json");
+
 //====ReportGenerator模块=================================================================================================
 }
 
@@ -192,34 +177,27 @@ void TaskDockPanel::onRefreshHistory() {
     ui->listHistory->clear();
     QString baseDir = QDir::currentPath() + "/tasks";
 
-//    emit logMessageRequested("校样功能",
-//                             QString("任务目录路径：%1").arg(baseDir));
-
     QDir dir(baseDir);
     if (!dir.exists()) {
         dir.mkpath(baseDir);
         return;
     }
 
-    QStringList taskDirs = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    if (taskDirs.isEmpty()) {
+    //最新的任务在最上面
+    QFileInfoList taskInfoList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Time);
+
+    if (taskInfoList.isEmpty()) {
         ui->listHistory->addItem("暂无历史任务");
-        // 在主窗口日志输出中显示
-        emit logMessageRequested("校样功能",
-                                 QString("暂无历史任务"));
+        emit logMessageRequested("校样功能", "暂无历史任务");
         return;
     }
 
-    for (const QString &taskName : taskDirs) {
-        QString taskPath = baseDir + "/" + taskName;
+    for (const QFileInfo &info : taskInfoList) {
+        QString taskPath = info.absoluteFilePath();
         QFile resultFile(taskPath + "/result.json");
         QString status = resultFile.exists() ? "已完成" : "进行中";
-        ui->listHistory->addItem(QString("%1（%2）").arg(taskName, status));
+        ui->listHistory->addItem(QString("%1（%2）").arg(info.fileName(), status));
     }
-
-    // 在主窗口日志输出中显示
-//    emit logMessageRequested("校样功能",
-//                             QString("历史任务显示完成"));
 }
 
 //显示结果
@@ -242,20 +220,29 @@ void TaskDockPanel::showTaskResult(const QString &taskDir) {
     }
     if (!f.open(QIODevice::ReadOnly)) return;
 
-    QJsonObject obj = QJsonDocument::fromJson(f.readAll()).object();
+    QByteArray data = f.readAll();
     f.close();
 
-    double mean = obj["平均偏差"].toDouble();
-    double maxE = obj["最大偏差"].toDouble();
-    double rate = obj["超差比例"].toDouble();
-//    QJsonArray points = obj["points"].toArray();
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(data, &err);
+    if (err.error != QJsonParseError::NoError) {
+        QMessageBox::warning(this, "错误", "result.json 文件格式错误！");
+        return;
+    }
 
-//    int exceed = 0;
-//    for (auto v : points)
-//        if (v.toObject()["distance"].toDouble() > 0.5) exceed++;
-//    double passRate = total ? 100.0 * (1.0 - (double)exceed / total) : 0.0;
+    QJsonObject root = doc.object();
+    if (!root.contains("statistics")) {
+        QMessageBox::warning(this, "错误", "result.json 缺少 statistics 字段！");
+        return;
+    }
 
-    ui->labelMeanErr->setText("平均偏差：" + QString::number(mean, 'f', 3));
-    ui->labelMaxErr->setText("最大偏差：" + QString::number(maxE, 'f', 3));
-    ui->labelPassRate->setText("超差比例" + QString::number(rate * 100, 'f', 2) + "%");
+    QJsonObject stats = root["statistics"].toObject();
+
+    double mean = stats["平均偏差"].toDouble();
+    double maxE = stats["最大偏差"].toDouble();
+    double rate = stats["超差比例"].toDouble();
+
+    ui->labelMeanErr->setText("平均偏差：" + QString::number(mean, 'f', 3) + " mm");
+    ui->labelMaxErr->setText("最大偏差：" + QString::number(maxE, 'f', 3) + " mm");
+    ui->labelPassRate->setText("超差比例：" + QString::number(rate * 100, 'f', 2) + "%");
 }

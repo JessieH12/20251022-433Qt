@@ -22,7 +22,6 @@ msvc {
 }
 
 SOURCES += \
-    1027-main.cpp \
     AnalysisEngine.cpp \
     JsonHandler.cpp \
     inputdialog.cpp \
@@ -62,8 +61,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 #QMAKE_LFLAGS += /MAP
 
 # 基础路径定义()
-PCL_ROOT = "D:\Program Files (x86)\PCL 1.9.1"
-QT_ROOT = "D:\Qt\5.14.1\msvc2017_64"
+PCL_ROOT = "D:\\Program Files\\PCL191"
+QT_ROOT = "D:\\ProgramData\\Qt\\Qt5.12.2\5.12.2\\msvc2017_64"
 
 # 包含目录
 INCLUDEPATH += $$PCL_ROOT/include/pcl-1.9 \
@@ -510,3 +509,5 @@ CONFIG(release, debug|release) {
 win32 {
     QMAKE_POST_LINK += $$escape_expand(\\n) xcopy /Y \"$$shell_path($$DLL_SOURCE_DIR)\\*.dll\" \"$$shell_path($$DLL_TARGET_DIR)\"
 }
+
+
